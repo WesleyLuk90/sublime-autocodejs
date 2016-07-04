@@ -1,0 +1,4 @@
+[
+	{ "caption": "AutoCodeJS: List Imports", "command": "autocodejs_list_imports" },
+	{ "caption": "AutoCodeJS: Fix Current Import", "command": "autocodejs_fix_import" }
+]
