@@ -1,3 +1,4 @@
 [
-	{ "caption": "AutoCodeJS: List Imports", "command": "autocodejs_list_imports" }
+	{ "caption": "AutoCodeJS: List Imports", "command": "autocodejs_list_imports" },
+	{ "caption": "AutoCodeJS: Resync Code", "command": "autocodejs_resync" }
 ]

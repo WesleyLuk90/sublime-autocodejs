@@ -25,6 +25,11 @@ class AutocodejsInsertImport(sublime_plugin.TextCommand):
         self.view.insert(edit, insert_point, line)
 
 
+class AutocodejsResync(sublime_plugin.TextCommand):
+    def run(self, edit):
+        server.InstanceManager.close_all()
+
+
 class AutocodejsListImports(sublime_plugin.TextCommand):
 
     def run(self, edit):

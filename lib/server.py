@@ -12,7 +12,7 @@ class InstanceManager:
 
     @classmethod
     def get_instance(cls, path):
-        if path not in cls.instances_by_path:
+        if path not in cls.instances_by_path or not cls.instances_by_path[path].is_running():
             cls.instances_by_path[path] = cls.create_instance(path)
         return cls.instances_by_path[path]
 
@@ -67,8 +67,9 @@ class Runner:
             self.get_program_path(),
             '--project-path',
             self.path,
-            '--server'
+            '--cli'
         ]
+        print(" ".join(args))
         startupinfo = None
         if sys.platform == "win32":
             # this startupinfo structure prevents a console window from popping up on Windows
@@ -95,12 +96,15 @@ class Runner:
         return response
 
     def get_imports(self, path):
-        response = self.send_request({'action': 'listImports', 'path': path})
+        response = self.send_request({'action': 'listImports', 'file': path})
         return response
 
     def get_insert_point(self, file_contents):
         response = self.send_request({'action': 'getInsertPoint', 'contents': file_contents})
         return response['insertPoint']
+
+    def is_running(self):
+        return self.process.poll() is not None
 
 
 def main():
