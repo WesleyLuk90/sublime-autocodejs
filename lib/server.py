@@ -69,7 +69,7 @@ class Runner:
             self.path,
             '--cli'
         ]
-        print(" ".join(args))
+        print(" ".join('"%s"' % part for part in args))
         startupinfo = None
         if sys.platform == "win32":
             # this startupinfo structure prevents a console window from popping up on Windows
