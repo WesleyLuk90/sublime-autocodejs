@@ -11,10 +11,6 @@ class InstanceManager:
     instances_by_path = {}
 
     @classmethod
-    def get_port(cls):
-        return 61234
-
-    @classmethod
     def get_instance(cls, path):
         if path not in cls.instances_by_path:
             cls.instances_by_path[path] = cls.create_instance(path)
@@ -23,7 +19,7 @@ class InstanceManager:
     @classmethod
     def create_instance(cls, path):
         print("Starting autocodejs in %s" % path)
-        return Runner(path, cls.get_port())
+        return Runner(path)
 
     @classmethod
     def close_all(cls):
@@ -33,9 +29,8 @@ class InstanceManager:
 
 
 class Runner:
-    def __init__(self, path, port):
+    def __init__(self, path):
         self.path = path
-        self.port = port
         self.queue = queue.Queue()
         self.start()
 
@@ -72,9 +67,7 @@ class Runner:
             self.get_program_path(),
             '--project-path',
             self.path,
-            '--server',
-            '--port',
-            str(self.port)
+            '--server'
         ]
         startupinfo = None
         if sys.platform == "win32":
@@ -88,11 +81,8 @@ class Runner:
 
     def close(self):
         self.process.stdin.close()
-        print("Sending terminate", self.process)
         self.process.terminate()
-        print("Waiting")
         self.process.wait()
-        print("Done")
 
     def send_request(self, command_object):
         command = json.dumps(command_object) + "\n"

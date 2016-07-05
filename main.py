@@ -1,10 +1,12 @@
 import sublime
 import sublime_plugin
-from .lib.server import InstanceManager
+from .lib import server
+import imp
 
 
 def plugin_unloaded():
-    InstanceManager.close_all()
+    server.InstanceManager.close_all()
+    imp.reload(server)
 
 
 class ExitHandler(sublime_plugin.EventListener):
@@ -27,7 +29,7 @@ class AutocodejsListImports(sublime_plugin.TextCommand):
 
     def run(self, edit):
         first_folder = self.view.window().folders()[0]
-        instance = InstanceManager.get_instance(first_folder)
+        instance = server.InstanceManager.get_instance(first_folder)
         response = instance.get_imports(self.view.file_name())
         file_contents = self.view.substr(sublime.Region(0, self.view.size()))
 
