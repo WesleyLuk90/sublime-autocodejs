@@ -1,6 +1,10 @@
 import sublime
 import sublime_plugin
-from .server import InstanceManager
+from .lib.server import InstanceManager
+
+
+def plugin_unloaded():
+    InstanceManager.close_all()
 
 
 class AutocodejsInsertImport(sublime_plugin.TextCommand):
@@ -27,16 +31,16 @@ class AutocodejsListImports(sublime_plugin.TextCommand):
                 items.append([name, file['path']])
 
         for module in response['modules']:
-            items.append(module)
+            items.append([module['name'], module['path']])
 
         def on_done(index):
             if index < 0:
                 return
             item = items[index]
             insert_point = instance.get_insert_point(file_contents)
-            if isinstance(item, list):
+            if index < len(response['importList']):
                 self.view.run_command('autocodejs_insert_import', {"path": item[1], "name": item[0], "insert_point": insert_point})
             else:
-                self.view.run_command('autocodejs_insert_import', {"path": item, "name": "testMod", "insert_point": insert_point, "module": True})
+                self.view.run_command('autocodejs_insert_import', {"path": item[1], "name": item[0], "insert_point": insert_point, "module": True})
 
         self.view.window().show_quick_panel(items, on_done)
