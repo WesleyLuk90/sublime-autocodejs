@@ -4,6 +4,7 @@ import os
 import json
 import threading
 import queue
+import sys
 
 
 class InstanceManager:
@@ -75,13 +76,23 @@ class Runner:
             '--port',
             str(self.port)
         ]
-        self.process = subprocess.Popen(args, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, universal_newlines=True, shell=True)
+        startupinfo = None
+        if sys.platform == "win32":
+            # this startupinfo structure prevents a console window from popping up on Windows
+            startupinfo = subprocess.STARTUPINFO()
+            startupinfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW
+        self.process = subprocess.Popen(args, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, universal_newlines=True, startupinfo=startupinfo)
 
         threading.Thread(target=self.stdout_reader).start()
         threading.Thread(target=self.stderr_reader).start()
 
     def close(self):
+        self.process.stdin.close()
+        print("Sending terminate", self.process)
         self.process.terminate()
+        print("Waiting")
+        self.process.wait()
+        print("Done")
 
     def send_request(self, command_object):
         command = json.dumps(command_object) + "\n"

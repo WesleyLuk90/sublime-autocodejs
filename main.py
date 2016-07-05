@@ -7,6 +7,12 @@ def plugin_unloaded():
     InstanceManager.close_all()
 
 
+class ExitHandler(sublime_plugin.EventListener):
+    def on_close(self, view):
+        if not sublime.windows():
+            plugin_unloaded()
+
+
 class AutocodejsInsertImport(sublime_plugin.TextCommand):
     def run(self, edit, path=None, name=None, insert_point=None, module=False):
         if module:
