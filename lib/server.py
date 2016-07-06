@@ -104,7 +104,7 @@ class Runner:
         return response['insertPoint']
 
     def is_running(self):
-        return self.process.poll() is not None
+        return self.process.poll() is None
 
 
 def main():
