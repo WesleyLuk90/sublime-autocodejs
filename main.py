@@ -18,9 +18,14 @@ class ExitHandler(sublime_plugin.EventListener):
 class AutocodejsInsertImport(sublime_plugin.TextCommand):
     def run(self, edit, path=None, name=None, insert_point=None, module=False):
         if module:
-            line = "\nimport %s from '%s';" % (name, path)
+            line = "import %s from '%s';" % (name, path)
         else:
-            line = "\nimport { %s } from '%s';" % (name, path)
+            line = "import { %s } from '%s';" % (name, path)
+
+        if insert_point == 0:
+            line += "\n"
+        else:
+            line = "\n" + line
 
         self.view.insert(edit, insert_point, line)
 
